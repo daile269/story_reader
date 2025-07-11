@@ -1,33 +1,26 @@
-from flask import Blueprint, jsonify, request   
+from flask import Blueprint, jsonify, request
+
+from app.utils.api_response import api_response
+from app.dto.story_dto import StoryDTO
+
+
 from ..models import Story
+from app.services.story_service import StoryService 
 from .. import db
 
 story_bp = Blueprint("story", __name__)
 
 @story_bp.route("/stories", methods=["GET"])
 def get_stories():
-    stories = Story.query.all()
-    result = []
-    for s in stories:
-        result.append({
-            "id": s.id,
-            "title": s.title,
-            "description": s.description,
-            "author": s.author
-        })
-    return jsonify(result)
+    stories = StoryService.get_all_stories()    
+    return jsonify(api_response(200,"Danh sách truyện",stories)), 200
 
 @story_bp.route("/stories/<int:story_id>", methods=["GET"])
 def get_story_detail(story_id):
-    story = Story.query.get_or_404(story_id)
-    chapters = [{"id": c.id, "title": c.title} for c in story.chapters]
-    return jsonify({
-        "id": story.id,
-        "title": story.title,
-        "description": story.description,
-        "author": story.author,
-        "chapters": chapters
-    })
+    story = StoryService.get_story_by_id(story_id)
+    if not story:
+        return jsonify(api_response(404, "Không tìm thấy truyện", None)), 404
+    return jsonify(api_response(200,"Danh sách truyện",story)), 200
 
 # Thêm truyện
 @story_bp.route("/stories", methods=["POST"])
@@ -35,14 +28,9 @@ def add_story():
     data = request.get_json()
     if not data:
         return jsonify({"error": "Missing or invalid JSON body"}), 400
-    new_story = Story(
-        title=data.get("title"),
-        description=data.get("description"),
-        author=data.get("author")
-    )
-    db.session.add(new_story)
-    db.session.commit()
-    return jsonify({"message": "Truyện đã được thêm thành công"}), 201
+    story_dto = StoryDTO(**data)  
+    StoryService.create_story(story_dto)
+    return jsonify(api_response(200,"Truyện đã được thêm thành công",data)), 200    
 
 # Sửa truyện
 @story_bp.route("/stories/<int:story_id>", methods=["PUT"])
@@ -50,20 +38,16 @@ def update_story(story_id):
     data = request.get_json()
     if not data:
         return jsonify({"error": "Missing or invalid JSON body"}), 400
-    story = Story.query.get_or_404(story_id)
-    story.title = data.get("title")
-    story.description = data.get("description")
-    story.author = data.get("author")
-    db.session.commit()
-    return jsonify({"message": "Truyện đã được cập nhật thành công"}), 200
+    story_dto = StoryDTO(**data) 
+    StoryService.update_story(story_dto,story_id)
+    return jsonify(api_response(200,"Truyện đã được sửa thành công",data)), 200    
+
 
 # Xóa truyện
 @story_bp.route("/stories/<int:story_id>", methods=["DELETE"])
 def delete_story(story_id):
-    story = Story.query.get_or_404(story_id)
-    db.session.delete(story)
-    db.session.commit()
-    return jsonify({"message": "Truyện đã được xóa thành công"}), 200
-
-
-# Sửa truyện    
+    deleted_story = StoryService.delete_story(story_id)
+    print(f"Đã xóa truyện: {deleted_story}")
+    if not deleted_story:
+        return jsonify(api_response(404, "Không tìm thấy truyện")), 404
+    return jsonify(api_response(200, "Truyện đã được xóa thành công",deleted_story)), 200
