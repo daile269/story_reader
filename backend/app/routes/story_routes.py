@@ -7,6 +7,7 @@ from app.dto.story_dto import StoryDTO, StoryUpdateDTO
 from ..models import Story
 from app.services.story_service import StoryService 
 from .. import db
+from app.services.s3_service import upload_file_to_s3
 
 story_bp = Blueprint("story", __name__)
 
@@ -51,3 +52,14 @@ def delete_story(story_id):
     if not deleted_story:
         return jsonify(api_response(404, "Không tìm thấy truyện")), 404
     return jsonify(api_response(200, "Truyện đã được xóa thành công",deleted_story)), 200
+
+# Upload image
+@story_bp.route("/stories/<int:story_id>/upload-image", methods=["POST"])
+def upload_image(story_id):
+    file = request.files.get("image")
+    if not file:
+        return jsonify(api_response(400, "Thiếu file ảnh")), 400
+    url = StoryService.upload_image(file, story_id)
+    if not url:
+        return jsonify(api_response(500, "Lỗi khi upload ảnh")), 500
+    return jsonify(api_response(200, "Ảnh đã được upload thành công", url)), 200

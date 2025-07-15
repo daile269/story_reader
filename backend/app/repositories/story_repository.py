@@ -13,6 +13,7 @@ class StoryRepository:
             "title": s.title,
             "description": s.description,
             "author": s.author,
+            "url_image": s.url_image,
             "chapters": [
                 {
                     "id": c.id,
@@ -39,6 +40,7 @@ class StoryRepository:
         "title": story.title,
         "description": story.description,
         "author": story.author,
+        "url_image": story.url_image,
         "chapters": [
             {
                 "id": c.id,

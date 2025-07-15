@@ -10,17 +10,16 @@ class Story(db.Model):
     title = db.Column(db.String(150))
     description = db.Column(db.Text)
     author = db.Column(db.String(100))
-
+    url_image = db.Column(db.String(255))
     chapters = db.relationship("Chapter", backref="story", lazy=True)
     
     # Quan hệ nhiều-nhiều với Category
     categories = db.relationship('Category', secondary=story_categories, backref='stories', lazy='subquery')
 
     def __init__(self, title, description, author):
-        self.title = title
+        self.title = title  
         self.description = description
         self.author = author
-
 
 class Chapter(db.Model):
     id = db.Column(db.Integer, primary_key=True)

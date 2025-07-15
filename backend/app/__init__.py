@@ -1,7 +1,11 @@
 from flask import Flask
 from app.extensions import db
 from app.utils.exception_handlers import register_error_handlers
+from app.config.logging_config import setup_logging
+import logging
 
+setup_logging()
+logging.info("Starting application") 
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')
