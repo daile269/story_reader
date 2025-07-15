@@ -23,7 +23,7 @@ def get_chapter_detail(chapter_id):
 def add_chapter():
     data = request.get_json()
     if not data:
-        return jsonify({"error": "Missing or invalid JSON body"}), 400
+        return jsonify(api_response(400, "Thiếu thông tin chương")), 400
     chapter_dto = ChapterDTO(**data)
     created_chap= ChapterService.create_chapter(chapter_dto)
     if not created_chap:
@@ -35,7 +35,7 @@ def add_chapter():
 def update_chapter(chapter_id):
     data = request.get_json()
     if not data:
-        return jsonify({"error": "Missing or invalid JSON body"}), 400
+        return jsonify(api_response(400, "Thiếu thông tin chương")), 400
     chapter_dto = ChapterDTO(**data)
     ChapterService.update_chapter(chapter_dto, chapter_id)
     return jsonify(api_response(200, "Chương đã được sửa thành công", data)), 200

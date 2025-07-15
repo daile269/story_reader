@@ -1,15 +1,25 @@
 from .extensions import db
 
+story_categories = db.Table(
+    'story_categories',
+    db.Column('story_id', db.Integer, db.ForeignKey('story.id'), primary_key=True),
+    db.Column('category_id', db.Integer, db.ForeignKey('category.id'), primary_key=True)
+)
 class Story(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150))
     description = db.Column(db.Text)
     author = db.Column(db.String(100))
+
     chapters = db.relationship("Chapter", backref="story", lazy=True)
+    
+    # Quan hệ nhiều-nhiều với Category
+    categories = db.relationship('Category', secondary=story_categories, backref='stories', lazy='subquery')
+
     def __init__(self, title, description, author):
-           self.title = title
-           self.description = description
-           self.author = author
+        self.title = title
+        self.description = description
+        self.author = author
 
 
 class Chapter(db.Model):
@@ -32,3 +42,9 @@ class User(db.Model):
         self.email = email
         self.password = password
 
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+
+    def __init__(self, name):
+        self.name = name

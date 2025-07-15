@@ -1,7 +1,7 @@
 from app.models import Story
 from app.dto.story_dto import StoryDTO, StoryUpdateDTO
 from app import db
-
+from app.repositories.category_repository import CategoryRepository 
 class StoryRepository:
     @staticmethod
     def get_all_stories():
@@ -19,6 +19,12 @@ class StoryRepository:
                     "title": c.title,
                     "content": c.content
                 } for c in s.chapters
+            ],
+            "categories": [
+                {
+                    "id": c.id,
+                    "name": c.name
+                } for c in s.categories 
             ]
         })
         return result
@@ -39,8 +45,13 @@ class StoryRepository:
                 "title": c.title,
                 "content": c.content
             } for c in story.chapters
+        ],
+        "categories": [
+            {
+                "id": c.id,
+                "name": c.name
+            } for c in story.categories # type: ignore  
         ]
-        
     }
         return result
     
@@ -53,7 +64,13 @@ class StoryRepository:
         "title": story.title,
         "description": story.description,
         "author": story.author,
-        "chapters": []
+        "chapters": [],
+        "categories": [
+            {
+                "id": c.id,
+                "name": c.name
+            } for c in story.categories # type: ignore
+        ]
     }
     
     @staticmethod
@@ -63,7 +80,8 @@ class StoryRepository:
              return None
         story.title = storyUpdate.title
         story.description = storyUpdate.description
-        story.author = storyUpdate.author
+        story.author = storyUpdate.author   
+        story.categories = storyUpdate.categories # type: ignore
         db.session.commit()
         return {
         "id": story.id,
@@ -76,6 +94,12 @@ class StoryRepository:
                 "title": c.title,
                 "content": c.content
             } for c in story.chapters
+        ],
+        "categories": [
+            {
+                "id": c.id,
+                "name": c.name
+            } for c in story.categories # type: ignore
         ]
     }
     
@@ -96,6 +120,12 @@ class StoryRepository:
                     "title": c.title,
                     "content": c.content
                 } for c in story.chapters
+            ],
+            "categories": [
+                {
+                    "id": c.id,
+                    "name": c.name
+                } for c in story.categories # type: ignore
             ]
         }
         db.session.delete(story)

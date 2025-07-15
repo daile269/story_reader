@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 
 from app.utils.api_response import api_response
-from app.dto.story_dto import StoryDTO
+from app.dto.story_dto import StoryDTO, StoryUpdateDTO
 
 
 from ..models import Story
@@ -27,7 +27,7 @@ def get_story_detail(story_id):
 def add_story():
     data = request.get_json()
     if not data:
-        return jsonify({"error": "Missing or invalid JSON body"}), 400
+        return jsonify(api_response(400, "Thiếu thông tin truyện")), 400
     story_dto = StoryDTO(**data)  
     StoryService.create_story(story_dto)
     return jsonify(api_response(200,"Truyện đã được thêm thành công",data)), 200    
@@ -37,8 +37,8 @@ def add_story():
 def update_story(story_id):
     data = request.get_json()
     if not data:
-        return jsonify({"error": "Missing or invalid JSON body"}), 400
-    story_dto = StoryDTO(**data) 
+        return jsonify(api_response(400, "Thiếu thông tin truyện")), 400
+    story_dto = StoryUpdateDTO(**data) 
     StoryService.update_story(story_dto,story_id)
     return jsonify(api_response(200,"Truyện đã được sửa thành công",data)), 200    
 

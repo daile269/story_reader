@@ -9,7 +9,9 @@ def create_app():
 
     from .routes.story_routes import story_bp
     from .routes.chapter_routes import chapter_bp
-    app.register_blueprint(story_bp)
+    from .routes.category_routers import category_bp
+    app.register_blueprint(story_bp)        
     app.register_blueprint(chapter_bp)
-    # register_error_handlers(app)
+    app.register_blueprint(category_bp)
+    register_error_handlers(app)
     return app

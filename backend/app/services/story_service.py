@@ -1,9 +1,9 @@
 
-from flask.json import jsonify
+from unicodedata import category
 from app.repositories.story_repository import StoryRepository
-from app.dto.story_dto import StoryDTO
-from app.models import Story
-from app.utils.api_response import api_response
+from app.dto.story_dto import StoryDTO, StoryUpdateDTO
+from app.models import Story      
+from app.repositories.category_repository import CategoryRepository
 
 class StoryService():
 
@@ -20,17 +20,19 @@ class StoryService():
         story = Story(
             title=story_dto.title,
             description=story_dto.description,
-            author=story_dto.author
+            author=story_dto.author,
         )
+        story.categories = CategoryRepository.get_category_objs_by_ids(story_dto.category_ids) # type: ignore
         return StoryRepository.create_story(story)
     
     @staticmethod
-    def update_story(story_dto: StoryDTO,story_id):
+    def update_story(story_dto: StoryUpdateDTO,story_id):
         story = Story(
             title=story_dto.title,
             description=story_dto.description,
-            author=story_dto.author
+            author=story_dto.author,
         )
+        story.categories = CategoryRepository.get_category_objs_by_ids(story_dto.category_ids) # type: ignore
         return StoryRepository.update_story(story,story_id)
     
     @staticmethod
