@@ -1,4 +1,5 @@
 from .extensions import db
+from datetime import datetime
 
 story_categories = db.Table(
     'story_categories',
@@ -11,6 +12,8 @@ class Story(db.Model):
     description = db.Column(db.Text)
     author = db.Column(db.String(100))
     url_image = db.Column(db.String(255))
+    view_count = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.now)
     chapters = db.relationship("Chapter", backref="story", lazy=True)
     
     # Quan hệ nhiều-nhiều với Category

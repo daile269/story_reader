@@ -66,3 +66,17 @@ class StoryService():
         StoryRepository.update_story(story, story_id)  # type: ignore
         app_logger.info(f"Upload ảnh thành công cho story id={story_id}, url={url}")
         return url
+    
+    @staticmethod
+    def get_16_stories_with_most_view_count():
+        return StoryRepository.get_16_stories_with_most_view_count()
+    
+    @staticmethod
+    def get_16_stories_with_created_at_most_recent():
+        return StoryRepository.get_16_stories_with_created_at_most_recent()
+    
+    @staticmethod
+    def get_16_stories_with_translate():
+        return StoryRepository.get_16_stories_with_translate()
+    
+ 

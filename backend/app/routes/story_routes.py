@@ -63,3 +63,21 @@ def upload_image(story_id):
     if not url:
         return jsonify(api_response(500, "Lỗi khi upload ảnh")), 500
     return jsonify(api_response(200, "Ảnh đã được upload thành công", url)), 200
+
+# Get 16 stories with the most view_count
+@story_bp.route("/stories/most-view-count", methods=["GET"])
+def get_16_stories_with_most_view_count():
+    stories = StoryService.get_16_stories_with_most_view_count()
+    return jsonify(api_response(200, "Danh sách truyện", stories)), 200
+
+# Get 16 stories with the created_at most recent
+@story_bp.route("/stories/created-at-most-recent", methods=["GET"])
+def get_16_stories_with_created_at_most_recent():
+    stories = StoryService.get_16_stories_with_created_at_most_recent()
+    return jsonify(api_response(200, "Danh sách truyện", stories)), 200 
+
+# Get 16 stories translate
+@story_bp.route("/stories/translate", methods=["GET"])
+def get_16_stories_with_translate():
+    stories = StoryService.get_16_stories_with_translate()
+    return jsonify(api_response(200, "Danh sách truyện", stories)), 200

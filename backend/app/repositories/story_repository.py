@@ -1,4 +1,4 @@
-from app.models import Story
+from app.models import Story, Category  
 from app.dto.story_dto import StoryDTO, StoryUpdateDTO
 from app import db
 from app.repositories.category_repository import CategoryRepository 
@@ -14,6 +14,8 @@ class StoryRepository:
             "description": s.description,
             "author": s.author,
             "url_image": s.url_image,
+            "view_count": s.view_count,
+            "created_at": s.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             "chapters": [
                 {
                     "id": c.id,
@@ -41,6 +43,8 @@ class StoryRepository:
         "description": story.description,
         "author": story.author,
         "url_image": story.url_image,
+        "view_count": story.view_count,
+        "created_at": story.created_at.strftime("%Y-%m-%d %H:%M:%S"),
         "chapters": [
             {
                 "id": c.id,
@@ -66,6 +70,8 @@ class StoryRepository:
         "title": story.title,
         "description": story.description,
         "author": story.author,
+        "view_count": story.view_count,
+        "created_at": story.created_at.strftime("%Y-%m-%d %H:%M:%S"),
         "chapters": [],
         "categories": [
             {
@@ -90,6 +96,8 @@ class StoryRepository:
         "title": story.title,
         "description": story.description,
         "author": story.author,
+        "view_count": story.view_count,
+        "created_at": story.created_at.strftime("%Y-%m-%d %H:%M:%S"),
         "chapters": [
             {
                 "id": c.id,
@@ -116,6 +124,8 @@ class StoryRepository:
             "title": story.title,
             "description": story.description,
             "author": story.author,
+            "view_count": story.view_count,
+            "created_at": story.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             "chapters": [
                 {
                     "id": c.id,
@@ -134,3 +144,93 @@ class StoryRepository:
         db.session.commit()
         return deleted_story
         
+
+# Get 16 stories with the most view_count
+    @staticmethod
+    def get_16_stories_with_most_view_count():
+        stories = Story.query.order_by(Story.view_count.desc()).limit(16).all()
+        result = []
+        for s in stories:
+            result.append({
+            "id": s.id,
+            "title": s.title,
+            "description": s.description,
+            "author": s.author,
+            "url_image": s.url_image,
+            "view_count": s.view_count,
+            "created_at": s.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            "chapters": [
+                {
+                    "id": c.id,
+                    "title": c.title,
+                    "content": c.content
+                } for c in s.chapters
+            ],
+            "categories": [
+                {
+                    "id": c.id,
+                    "name": c.name
+                } for c in s.categories 
+            ]
+        })
+        return result
+
+# Get 16 stories with the created_at most recent
+    @staticmethod
+    def get_16_stories_with_created_at_most_recent():
+        stories = Story.query.order_by(Story.created_at.desc()).limit(16).all()
+        result = []
+        for s in stories:
+            result.append({
+                "id": s.id,
+                "title": s.title,
+                "description": s.description,
+                "author": s.author,
+                "url_image": s.url_image,
+                "view_count": s.view_count,
+                "created_at": s.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                "chapters": [
+                    {
+                        "id": c.id,
+                        "title": c.title,
+                        "content": c.content
+                    } for c in s.chapters
+                ],
+                "categories": [
+                    {
+                        "id": c.id,
+                        "name": c.name
+                    } for c in s.categories
+                ]
+            })
+        return result
+#Top 16 stories translate
+    @staticmethod
+    def get_16_stories_with_translate():
+        stories = Story.query.filter(Story.categories.any(name="Dịch")).order_by(Story.view_count.desc()).limit(16).all()
+        result = []
+        for s in stories:
+            result.append({
+                "id": s.id,
+                "title": s.title,   
+                "description": s.description,
+                "author": s.author,
+                "url_image": s.url_image,
+                "view_count": s.view_count,
+                "created_at": s.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                "chapters": [
+                    {
+                        "id": c.id,
+                        "title": c.title,
+                        "content": c.content
+                    } for c in s.chapters
+                ],
+                "categories": [
+                    {
+                        "id": c.id,
+                        "name": c.name
+                    } for c in s.categories
+                ]
+            })
+        return result
+
