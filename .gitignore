@@ -1,2 +1,6 @@
 venv/
 requirements.txt
+
+backend/venv/
+backend/migrations/** */
+backend/.env
