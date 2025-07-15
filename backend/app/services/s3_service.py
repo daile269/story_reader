@@ -6,6 +6,8 @@ from app.config.aws_config import (
     AWS_REGION,
     AWS_BUCKET_NAME,
 )
+from app.config.logging_config import setup_logging
+app_logger, _ = setup_logging()
 
 def get_s3_client():
     return boto3.client(
@@ -16,11 +18,11 @@ def get_s3_client():
     )
 
 def upload_file_to_s3(file_obj, filename, folder="story_images"):
-  # Upload file_obj (werkzeug FileStorage) lên S3, trả về URL nếu thành công, None nếu lỗi.
-    print(f"Uploading file: {file_obj}")
+    # Upload file_obj (werkzeug FileStorage) lên S3, trả về URL nếu thành công, None nếu lỗi.
+    app_logger.info(f"Bắt đầu upload file: {filename} lên S3, folder: {folder}")
     s3_client = get_s3_client()
     key = f"{folder}/{filename}"
-    print(f"Key: {key}")
+    app_logger.info(f"S3 key: {key}")
     try:
         s3_client.upload_fileobj(
             file_obj,
@@ -28,8 +30,8 @@ def upload_file_to_s3(file_obj, filename, folder="story_images"):
             key
         )
         url = f"https://{AWS_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{key}"
-        print(f"URL: {url}")
+        app_logger.info(f"Upload file thành công: {url}")
         return url
     except (BotoCoreError, ClientError) as e:
-        print(f"Lỗi khi upload file lên S3: {e}")
+        app_logger.error(f"Lỗi khi upload file lên S3: {e}")
         return None
